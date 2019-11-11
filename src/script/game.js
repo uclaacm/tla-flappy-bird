@@ -28,7 +28,6 @@ class Game {
 
 
     run = () => {
-        this.p1.updateKinematics(100.0 / this.FPS);
         this.bird.updateKinematics(100.0 / this.FPS);
 
         this.context.clearRect(0 , 0 , this.canvas.width , this.canvas.height);
