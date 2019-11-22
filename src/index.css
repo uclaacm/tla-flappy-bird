@@ -8,9 +8,7 @@ body {
     position: relative;
 
     display: block;
-    margin: auto auto;
-    top: 50vh;
-    transform: translateY(-50%);
+    margin: 2.5vh auto;
 
     height: 90vh;
     width: 90vw;
@@ -18,4 +16,11 @@ body {
     border-width: 5px;
     border-style: solid;
     border-color: black;
+}
+
+#footer {
+    position: relative;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 12px;
 }
