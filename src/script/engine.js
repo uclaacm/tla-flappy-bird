@@ -79,12 +79,11 @@ class PhysicalSprite {
         this.boundingBox = BOUNDING_BOX;
     }
 
+
     /*
-     * Determines if this Sprite object collides with another Sprite object
-     *
-     * returns True if they collide, False otherwise
+     * Helper function for collision detection
      */
-    collidesWith = (SPRITE) => {
+    collisionCheck = (SPRITE) => {
         // Check for collidability 
         if(!this.isCollidable || !SPRITE.isCollidable) {
             return false;
@@ -110,5 +109,15 @@ class PhysicalSprite {
         });
 
         return collides;
+    }
+
+
+    /*
+     * Determines if this Sprite object collides with another Sprite object
+     *
+     * returns True if they collide, False otherwise
+     */
+    collidesWith = (SPRITE) => {
+        return this.collisionCheck(SPRITE) || SPRITE.collisionCheck(this);
     }
 }
