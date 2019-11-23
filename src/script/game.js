@@ -86,8 +86,8 @@ class Bird extends PhysicalSprite {
 
 
     draw = () => {
-        this.context.fillStyle = 'orange';
-        this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
+        var img = setSprite();
+        this.context.drawImage(img, this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 
 
