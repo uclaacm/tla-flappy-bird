@@ -12,8 +12,8 @@ class Game {
         this.ROOF_HEIGHT        = 100;
         this.PIPE_WIDTH         = 100;
         this.PIPE_SPEED         = -3;
-        this.PIPE_GEN_SPEED     = 1300;     // This is a time in ms!
-        this.PIPE_SEPARATION    = this.BIRD_HEIGHT * 3;
+        this.PIPE_GEN_SPEED     = 1300;                     // This is a time in ms!
+        this.PIPE_SEPARATION    = this.BIRD_HEIGHT * 3;     // This is between top and bottom
 
         this.canvas = CANVAS;
         this.context = CANVAS.getContext("2d");
@@ -27,7 +27,30 @@ class Game {
     }
 
 
-    start = () => {
+    load = () => {
+        this.createSprites();
+
+        this.background = new Image();
+        this.background.src = "./assets/img/background.JPG";
+        this.background.onload = this.pregame;
+    }
+
+
+    pregame = () => {
+        this.draw();
+
+        this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
+    }
+
+
+    startOnKeydown = (event) => {
+        if (event.key === " ") {
+            this.start();
+        }
+    }
+
+    
+    createSprites = () => {
         this.bird = new Bird(this.context);
         this.bird.setCollidable(true);
         this.bird.setPosition([this.BIRD_START_X, this.BIRD_START_Y]);
@@ -46,6 +69,12 @@ class Game {
         this.roof.setBoundingBox([this.canvas.width, this.ROOF_HEIGHT])
 
         this.pipes = [];
+    }
+
+
+    start = () => {
+        // Remove start game event listener
+        window.removeEventListener("keydown" , this.startOnKeydown);
 
         // Make the bird jump on spacebar down
         window.addEventListener("keydown", event => {
@@ -57,6 +86,9 @@ class Game {
         // Looped events
         this.loopRunner = window.setInterval(this.run, 1000.0 / this.FPS);
         this.pipeGenerator = window.setInterval(this.generatePipeSet , this.PIPE_GEN_SPEED);
+
+        // This is so the bird jumps when you start the game instead of just falling
+        this.bird.jump(this.BIRD_JUMP_VEL);
 
         this.run();
     }
@@ -93,20 +125,7 @@ class Game {
         // Garbage Cleanup
         this.pipes = this.pipes.filter(i => i.pos[0] > (0 - this.PIPE_WIDTH));
 
-
-        // Draw background
-        let background = new Image();
-        background.src = "./assets/img/background.JPG"
-        this.context.drawImage(background , 0 , 0 , this.canvas.width , this.canvas.height);
-
-
-        // Draw everything after this line:
-        this.bird.draw();
-        this.ground.draw();
-
-        this.pipes.forEach(i => {
-            i.draw();
-        });
+        this.draw();
     }
 
 
@@ -114,8 +133,6 @@ class Game {
         window.clearInterval(this.loopRunner);
         window.clearInterval(this.pipeGenerator);
         this.bird.setPosition([this.BIRD_START_X , this.canvas.height - this.BIRD_HEIGHT - this.GROUND_HEIGHT]);
-
-        console.log("gg!");
     }
 
 
@@ -147,6 +164,21 @@ class Game {
 
         this.pipes.push(topPipe);
         this.pipes.push(bottomPipe);
+    }
+
+
+    draw = () => {
+        this.context.drawImage(this.background , 0 , 0 , this.canvas.width , this.canvas.height);
+        console.log(this.canvas.width);
+        console.log(this.canvas.height);
+        console.log(this.background);
+
+
+        this.bird.draw();
+        this.ground.draw();
+        this.pipes.forEach(i => {
+            i.draw();
+        });
     }
 }
 
