@@ -52,19 +52,15 @@ class Game {
     
     createSprites = () => {
         this.bird = new Bird(this.context);
-        this.bird.setCollidable(true);
         this.bird.setPosition([this.BIRD_START_X, this.BIRD_START_Y]);
         this.bird.setAcceleration([0, this.BIRD_ACCEL]);
-        this.bird.setVelocity([0, 0]);
         this.bird.setBoundingBox([this.BIRD_WIDTH, this.BIRD_HEIGHT]);
 
         this.ground = new Ground(this.context);
-        this.ground.setCollidable(true);
         this.ground.setPosition([0, this.canvas.height - this.GROUND_HEIGHT]);
         this.ground.setBoundingBox([this.canvas.width, this.GROUND_HEIGHT]);
 
         this.roof = new Roof(this.context);
-        this.roof.setCollidable(true);
         this.roof.setPosition([0, -this.ROOF_HEIGHT]);
         this.roof.setBoundingBox([this.canvas.width, this.ROOF_HEIGHT])
 
@@ -150,14 +146,10 @@ class Game {
         let topPipe = new Pipe(this.context);
         let bottomPipe = new Pipe(this.context);
 
-        topPipe.setCollidable(true);
-        topPipe.setAcceleration([0 , 0]);
         topPipe.setVelocity([this.PIPE_SPEED , 0]);
         topPipe.setPosition([this.canvas.width , 0]);
         topPipe.setBoundingBox([this.PIPE_WIDTH , topPipeHeight]);
 
-        bottomPipe.setCollidable(true);
-        bottomPipe.setAcceleration([0 , 0]);
         bottomPipe.setVelocity([this.PIPE_SPEED , 0]);
         bottomPipe.setPosition([this.canvas.width , topPipeHeight + this.PIPE_SEPARATION]);
         bottomPipe.setBoundingBox([this.PIPE_WIDTH , LEFTOVER_HEIGHT - topPipeHeight - this.PIPE_SEPARATION]);
@@ -169,10 +161,6 @@ class Game {
 
     draw = () => {
         this.context.drawImage(this.background , 0 , 0 , this.canvas.width , this.canvas.height);
-        console.log(this.canvas.width);
-        console.log(this.canvas.height);
-        console.log(this.background);
-
 
         this.bird.draw();
         this.ground.draw();

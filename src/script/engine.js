@@ -21,6 +21,11 @@ class PhysicalSprite {
      */
     constructor(CONTEXT) {
         this.context = CONTEXT;
+        
+        this.pos = [0 , 0];
+        this.vel = [0 , 0];
+        this.accel = [0 , 0];
+        this.isCollidable = true;
     }
 
 
