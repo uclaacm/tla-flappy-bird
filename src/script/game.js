@@ -4,8 +4,15 @@ class Game {
 
         this.canvas = CANVAS;
         this.context = CANVAS.getContext("2d");
+        this.context.imageSmoothingEnabled = false;
 
         this.loopRunner = window.setInterval(this.run, 1000.0 / this.FPS);
+    }
+
+
+    resize = (width , height) => {
+        this.canvas.width = width;
+        this.canvas.height = height;
     }
 
 
@@ -51,6 +58,13 @@ class Game {
             this.bird.setPosition([50, 0]);
             this.bird.setVelocity([0, 0]);
         }
+
+
+        // Draw background
+        let background = new Image();
+        background.src = "./assets/img/background.JPG"
+        this.context.drawImage(background , 0 , 0 , this.canvas.width , this.canvas.height);
+
 
 
         // Draw everything after this line:

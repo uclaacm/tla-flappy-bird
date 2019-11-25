@@ -10,9 +10,6 @@ body {
     display: block;
     margin: 2.5vh auto;
 
-    height: 90vh;
-    width: 90vw;
-
     border-width: 5px;
     border-style: solid;
     border-color: black;
