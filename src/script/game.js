@@ -63,6 +63,13 @@ class Game {
         }
     }
 
+
+    jumpOnKeydown = (event) => {
+        if (event.key === " ") {
+            this.bird.jump(this.BIRD_JUMP_VEL);
+        }
+    }
+
     
     createSprites = () => {
         this.bird = new Bird(this.context);
@@ -87,11 +94,7 @@ class Game {
         window.removeEventListener("keydown" , this.startOnKeydown);
 
         // Make the bird jump on spacebar down
-        window.addEventListener("keydown", event => {
-            if (event.key === " ") {
-                this.bird.jump(this.BIRD_JUMP_VEL);
-            }
-        });
+        window.addEventListener("keydown", this.jumpOnKeydown);
 
         // Looped events
         this.loopRunner = window.setInterval(this.run, 1000.0 / this.FPS);
@@ -127,7 +130,14 @@ class Game {
 
         this.pipes.forEach(i => {
             if (i.collidesWith(this.bird)) {
-                this.gameOver();
+                window.removeEventListener("keydown" , this.jumpOnKeydown);
+
+                this.pipes.forEach(i => {
+                    i.setCollidable(false);
+                    i.setVelocity([0 , 0]);
+                });
+
+                window.clearInterval(this.pipeGenerator);
             }
         });
 
