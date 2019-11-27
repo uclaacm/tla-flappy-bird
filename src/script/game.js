@@ -1,29 +1,35 @@
 class Game {
     constructor(CANVAS) {
-        // Constants
-        this.FPS                = 60;
-        this.BIRD_START_X       = 200;
-        this.BIRD_START_Y       = 200;
-        this.BIRD_ACCEL         = .15;
-        this.BIRD_WIDTH         = 100;
-        this.BIRD_HEIGHT        = 100;
-        this.BIRD_JUMP_VEL      = -5;
-        this.GROUND_HEIGHT      = 100;
-        this.ROOF_HEIGHT        = 100;
-        this.PIPE_WIDTH         = 100;
-        this.PIPE_SPEED         = -3;
-        this.PIPE_GEN_SPEED     = 1300;                     // This is a time in ms!
-        this.PIPE_SEPARATION    = this.BIRD_HEIGHT * 3;     // This is between top and bottom
-
         this.canvas = CANVAS;
         this.context = CANVAS.getContext("2d");
         this.context.imageSmoothingEnabled = false;
+
+        this.setConstants();
+    }
+
+
+    setConstants = () => {
+        // Constants
+        this.FPS                = 60;
+        this.BIRD_START_X       = this.canvas.height / 5;
+        this.BIRD_START_Y       = this.canvas.height / 5;
+        this.BIRD_ACCEL         = this.canvas.height / 6666;
+        this.BIRD_WIDTH         = this.canvas.height / 10;
+        this.BIRD_HEIGHT        = this.canvas.height / 10;
+        this.BIRD_JUMP_VEL      = -this.canvas.height / 200;
+        this.GROUND_HEIGHT      = this.canvas.height / 10;
+        this.ROOF_HEIGHT        = this.canvas.height / 10;
+        this.PIPE_WIDTH         = this.canvas.height / 10;
+        this.PIPE_SPEED         = -this.canvas.height / 330;
+        this.PIPE_GEN_SPEED     = 1300;                         // This is a time in ms!
+        this.PIPE_SEPARATION    = this.BIRD_HEIGHT * 2.5;       // This is between top and bottom
     }
 
 
     resize = (width , height) => {
         this.canvas.width = width;
         this.canvas.height = height;
+        this.setConstants();
     }
 
 

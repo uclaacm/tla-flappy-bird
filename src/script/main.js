@@ -1,10 +1,23 @@
+resize = (game) => {
+    const RATIO             = 855.0 / 1728.0;
+    const EFFECTIVE_WIDTH   = window.innerWidth * .9;
+    const EFFECTIVE_HEIGHT  = window.innerHeight * .9;
+
+    if(EFFECTIVE_WIDTH * RATIO > window.innerHeight) {
+        game.resize(EFFECTIVE_HEIGHT / RATIO , EFFECTIVE_HEIGHT)
+    }
+    else {
+        game.resize(EFFECTIVE_WIDTH , EFFECTIVE_WIDTH * RATIO);
+    }
+}
+
 window.onload = () => {
     let flappy = new Game(document.getElementById("game"));
 
-    window.addEventListener("resize" , () => {
-        flappy.resize(window.innerWidth * .9 , window.innerHeight * .9);
-    });
+    window.addEventListener("resize" , resize(flappy));
 
-    flappy.resize(window.innerWidth * .9 , window.innerHeight * .9);
+    resize(flappy);
     flappy.load();
+
+    // Start coding here!
 };
