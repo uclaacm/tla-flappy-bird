@@ -13,7 +13,7 @@ class Game {
         this.FPS                = 60;
         this.BIRD_START_X       = this.canvas.height / 5;
         this.BIRD_START_Y       = this.canvas.height / 5;
-        this.BIRD_ACCEL         = this.canvas.height / 6666;
+        this.BIRD_ACCEL         = this.canvas.height / 6200;
         this.BIRD_WIDTH         = this.canvas.height / 10;
         this.BIRD_HEIGHT        = this.canvas.height / 10;
         this.BIRD_JUMP_VEL      = -this.canvas.height / 200;
@@ -37,7 +37,7 @@ class Game {
         this.createSprites();
 
         this.background = new Image();
-        this.background.src = "./assets/img/background.JPG";
+        this.background.src = "./assets/img/BG.png";
         this.background.onload = this.pregame;
     }
 
