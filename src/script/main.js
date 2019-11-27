@@ -1,5 +1,5 @@
 resize = (game) => {
-    const RATIO             = 855.0 / 1728.0;
+    const RATIO             = 750.0 / 1000.0;
     const EFFECTIVE_WIDTH   = window.innerWidth * .9;
     const EFFECTIVE_HEIGHT  = window.innerHeight * .9;
 
