@@ -36,9 +36,17 @@ class Game {
     load = () => {
         this.createSprites();
 
-        this.background = new Image();
-        this.background.src = "./assets/img/BG.png";
-        this.background.onload = this.pregame;
+        this.topPipeImg = new Image();
+        this.topPipeImg.src = "./assets/img/top-pipe.png";
+        this.topPipeImg.onload = () => {
+            this.bottomPipeImg = new Image();
+            this.bottomPipeImg.src = "./assets/img/bottom-pipe.png";
+            this.bottomPipeImg.onload = () => {
+                this.background = new Image();
+                this.background.src = "./assets/img/BG.png";
+                this.background.onload = this.pregame
+            }
+        }
     }
 
 
@@ -140,6 +148,7 @@ class Game {
 
     generatePipeSet = () => {
         const LEFTOVER_HEIGHT = this.canvas.height - this.GROUND_HEIGHT;
+        const ASSET_HEIGHT = .6 * this.canvas.height;
         const PIPE_HEIGHTS = [
             LEFTOVER_HEIGHT * .1 ,
             LEFTOVER_HEIGHT * .2 ,
@@ -149,16 +158,16 @@ class Game {
         ];
 
         let topPipeHeight = PIPE_HEIGHTS[Math.floor(Math.random() * PIPE_HEIGHTS.length)];
-        let topPipe = new Pipe(this.context);
-        let bottomPipe = new Pipe(this.context);
+        let topPipe = new Pipe(this.context , this.topPipeImg);
+        let bottomPipe = new Pipe(this.context , this.bottomPipeImg);
 
         topPipe.setVelocity([this.PIPE_SPEED , 0]);
-        topPipe.setPosition([this.canvas.width , 0]);
-        topPipe.setBoundingBox([this.PIPE_WIDTH , topPipeHeight]);
+        topPipe.setPosition([this.canvas.width , topPipeHeight - ASSET_HEIGHT]);
+        topPipe.setBoundingBox([this.PIPE_WIDTH , ASSET_HEIGHT]);
 
         bottomPipe.setVelocity([this.PIPE_SPEED , 0]);
         bottomPipe.setPosition([this.canvas.width , topPipeHeight + this.PIPE_SEPARATION]);
-        bottomPipe.setBoundingBox([this.PIPE_WIDTH , LEFTOVER_HEIGHT - topPipeHeight - this.PIPE_SEPARATION]);
+        bottomPipe.setBoundingBox([this.PIPE_WIDTH , ASSET_HEIGHT]);
 
         this.pipes.push(topPipe);
         this.pipes.push(bottomPipe);
@@ -168,11 +177,11 @@ class Game {
     draw = () => {
         this.context.drawImage(this.background , 0 , 0 , this.canvas.width , this.canvas.height);
 
-        this.bird.draw();
-        this.ground.draw();
         this.pipes.forEach(i => {
             i.draw();
         });
+        this.bird.draw();
+        this.ground.draw();
     }
 }
 
@@ -181,14 +190,15 @@ class Game {
 
 
 class Pipe extends PhysicalSprite {
-    constructor(CONTEXT) {
+    constructor(CONTEXT , IMAGE) {
         super(CONTEXT);
+
+        this.image = IMAGE;
     }
 
 
     draw = () => {
-        this.context.fillStyle = 'blue';
-        this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
+        this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 }
 
