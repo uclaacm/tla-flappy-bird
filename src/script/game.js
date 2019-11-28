@@ -218,6 +218,10 @@ class Bird extends PhysicalSprite {
         super(CONTEXT);
     }
 
+    setSprite = (imageLink) => {
+        this.image = new Image();
+        this.image.src = imageLink;
+    }
 
     draw = () => {
         this.context.fillStyle = 'orange';
