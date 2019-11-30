@@ -52,6 +52,8 @@ class Game {
     async load() {
         this.createSprites();
 
+        this.context.font = "48px sans-serif";
+
         this.topPipeImg = await this.loadImg("./assets/img/top-pipe.png");
         this.bottomPipeImg = await this.loadImg("./assets/img/bottom-pipe.png");
         this.backgroundImg = await this.loadImg("./assets/img/BG.png");
