@@ -17,8 +17,9 @@ window.onload = () => {
     window.addEventListener("resize" , resize(flappy));
 
     resize(flappy);
-    flappy.load();
 
     // Start coding here!
-    // flappy.bird.setSprite('http://sohme.com/wp-content/uploads/2015/07/red.png');
+    // flappy.setBirdImg('http://sohme.com/wp-content/uploads/2015/07/red.png')
+
+    flappy.load();
 };

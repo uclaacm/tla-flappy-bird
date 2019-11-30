@@ -17,7 +17,7 @@ class Game {
         this.BIRD_START_Y       = this.canvas.height / 5;
         this.BIRD_ACCEL         = this.canvas.height / 6200;
         this.BIRD_WIDTH         = this.canvas.height / 10;
-        this.BIRD_HEIGHT        = this.canvas.height / 12;
+        this.BIRD_HEIGHT        = this.canvas.height / 10;
         this.BIRD_JUMP_VEL      = -this.canvas.height / 200;
         this.GROUND_HEIGHT      = this.canvas.height / 10;
         this.ROOF_HEIGHT        = this.canvas.height / 10;
@@ -25,6 +25,11 @@ class Game {
         this.PIPE_SPEED         = -this.canvas.height / 330;
         this.PIPE_GEN_SPEED     = 1300;                         // This is a time in ms!
         this.PIPE_SEPARATION    = this.BIRD_HEIGHT * 2.5;       // This is between top and bottom
+    }
+
+
+    setBirdImg = (src) => {
+        this.birdImgSrc = src;
     }
 
 
@@ -55,7 +60,7 @@ class Game {
         this.topPipeImg = await this.loadImg("./assets/img/top-pipe.png");
         this.bottomPipeImg = await this.loadImg("./assets/img/bottom-pipe.png");
         this.backgroundImg = await this.loadImg("./assets/img/background.png");
-        this.birdImg = await this.loadImg("./assets/img/bird.png");
+        this.birdImg = await this.loadImg((this.birdImgSrc) ? this.birdImgSrc : "./assets/img/bird.png");
 
         this.createSprites();
 
@@ -272,11 +277,6 @@ class Bird extends PhysicalSprite {
         super(CONTEXT);
 
         this.image = IMAGE;
-    }
-
-    setSprite = (imageLink) => {
-        this.image = new Image();
-        this.image.src = imageLink;
     }
 
     draw = () => {
