@@ -5,6 +5,8 @@ class Game {
         this.context.imageSmoothingEnabled = false;
 
         this.setConstants();
+
+        this.score = 0;
     }
 
 
@@ -52,6 +54,7 @@ class Game {
 
     pregame = () => {
         this.draw();
+        this.drawIntro();
 
         this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
     }
@@ -192,6 +195,20 @@ class Game {
         });
         this.bird.draw();
         this.ground.draw();
+
+        this.drawScore();
+    }
+
+
+    drawScore = () => {
+        this.context.fillStyle = 'black';
+        this.context.fillText("Score: " + this.score , 10 , 50);
+    }
+
+
+    drawIntro = () => {
+        this.context.fillStyle = 'black';
+        this.context.fillText("Press space to jump" , 10 , 50);
     }
 }
 
