@@ -35,20 +35,28 @@ class Game {
     }
 
 
-    load = () => {
+    loadImg = (src) => {
+        return new Promise( (resolve , reject) => {
+            let img = new Image();
+            img.src = src;
+            img.onload = () => {
+                resolve(img);
+            }
+            img.onerror = () => {
+                reject(new Error);
+            }
+        } );
+    }
+
+
+    async load() {
         this.createSprites();
 
-        this.topPipeImg = new Image();
-        this.topPipeImg.src = "./assets/img/top-pipe.png";
-        this.topPipeImg.onload = () => {
-            this.bottomPipeImg = new Image();
-            this.bottomPipeImg.src = "./assets/img/bottom-pipe.png";
-            this.bottomPipeImg.onload = () => {
-                this.background = new Image();
-                this.background.src = "./assets/img/BG.png";
-                this.background.onload = this.pregame
-            }
-        }
+        this.topPipeImg = await this.loadImg("./assets/img/top-pipe.png");
+        this.bottomPipeImg = await this.loadImg("./assets/img/bottom-pipe.png");
+        this.backgroundImg = await this.loadImg("./assets/img/BG.png");
+
+        this.pregame();
     }
 
 
@@ -188,7 +196,7 @@ class Game {
 
 
     draw = () => {
-        this.context.drawImage(this.background , 0 , 0 , this.canvas.width , this.canvas.height);
+        this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
 
         this.pipes.forEach(i => {
             i.draw();
