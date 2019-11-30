@@ -63,7 +63,6 @@ class Game {
 
 
     pregame = () => {
-        this.draw();
         this.drawIntro();
 
         this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
@@ -229,6 +228,9 @@ class Game {
 
 
     drawIntro = () => {
+        this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
+        this.bird.draw();
+        this.ground.draw();
         this.context.fillStyle = 'black';
         this.context.fillText("Press space to jump" , 10 , 50);
     }
