@@ -177,9 +177,8 @@ class Game {
 
     generatePipeSet = () => {
         const LEFTOVER_HEIGHT = this.canvas.height - this.GROUND_HEIGHT;
-        const ASSET_HEIGHT = .6 * this.canvas.height;
+        const ASSET_HEIGHT = .65 * this.canvas.height;
         const PIPE_HEIGHTS = [
-            LEFTOVER_HEIGHT * .1 ,
             LEFTOVER_HEIGHT * .2 ,
             LEFTOVER_HEIGHT * .3 ,
             LEFTOVER_HEIGHT * .4 ,
