@@ -17,7 +17,7 @@ class Game {
         this.BIRD_START_Y       = this.canvas.height / 5;
         this.BIRD_ACCEL         = this.canvas.height / 6200;
         this.BIRD_WIDTH         = this.canvas.height / 10;
-        this.BIRD_HEIGHT        = this.canvas.height / 10;
+        this.BIRD_HEIGHT        = this.canvas.height / 12;
         this.BIRD_JUMP_VEL      = -this.canvas.height / 200;
         this.GROUND_HEIGHT      = this.canvas.height / 10;
         this.ROOF_HEIGHT        = this.canvas.height / 10;
@@ -50,13 +50,14 @@ class Game {
 
 
     async load() {
-        this.createSprites();
-
         this.context.font = "48px sans-serif";
 
         this.topPipeImg = await this.loadImg("./assets/img/top-pipe.png");
         this.bottomPipeImg = await this.loadImg("./assets/img/bottom-pipe.png");
-        this.backgroundImg = await this.loadImg("./assets/img/BG.png");
+        this.backgroundImg = await this.loadImg("./assets/img/background.png");
+        this.birdImg = await this.loadImg("./assets/img/bird.png");
+
+        this.createSprites();
 
         this.pregame();
     }
@@ -84,7 +85,7 @@ class Game {
 
     
     createSprites = () => {
-        this.bird = new Bird(this.context);
+        this.bird = new Bird(this.context , this.birdImg);
         this.bird.setPosition([this.BIRD_START_X, this.BIRD_START_Y]);
         this.bird.setAcceleration([0, this.BIRD_ACCEL]);
         this.bird.setBoundingBox([this.BIRD_WIDTH, this.BIRD_HEIGHT]);
@@ -268,8 +269,10 @@ class ScoreBox extends PhysicalSprite {
 
 
 class Bird extends PhysicalSprite {
-    constructor(CONTEXT) {
+    constructor(CONTEXT , IMAGE) {
         super(CONTEXT);
+
+        this.image = IMAGE;
     }
 
     setSprite = (imageLink) => {
@@ -278,8 +281,7 @@ class Bird extends PhysicalSprite {
     }
 
     draw = () => {
-        this.context.fillStyle = 'orange';
-        this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
+        this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 
 
