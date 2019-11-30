@@ -43,7 +43,7 @@ class Game {
                 resolve(img);
             }
             img.onerror = () => {
-                reject(new Error);
+                reject(new Error("Error loading image resource"));
             }
         } );
     }
