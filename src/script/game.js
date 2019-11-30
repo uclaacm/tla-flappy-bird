@@ -141,14 +141,20 @@ class Game {
 
         this.pipes.forEach(i => {
             if (i.collidesWith(this.bird)) {
-                window.removeEventListener("keydown" , this.jumpOnKeydown);
+                if(i instanceof Pipe) {
+                    window.removeEventListener("keydown" , this.jumpOnKeydown);
 
-                this.pipes.forEach(i => {
+                    this.pipes.forEach(i => {
+                        i.setCollidable(false);
+                        i.setVelocity([0 , 0]);
+                    });
+
+                    window.clearInterval(this.pipeGenerator);
+                }
+                else if(i instanceof ScoreBox) {
+                    this.score ++;
                     i.setCollidable(false);
-                    i.setVelocity([0 , 0]);
-                });
-
-                window.clearInterval(this.pipeGenerator);
+                }
             }
         });
 
@@ -181,6 +187,7 @@ class Game {
         let topPipeHeight = PIPE_HEIGHTS[Math.floor(Math.random() * PIPE_HEIGHTS.length)];
         let topPipe = new Pipe(this.context , this.topPipeImg);
         let bottomPipe = new Pipe(this.context , this.bottomPipeImg);
+        let scoreBox = new ScoreBox(this.context);
 
         topPipe.setVelocity([this.PIPE_SPEED , 0]);
         topPipe.setPosition([this.canvas.width , topPipeHeight - ASSET_HEIGHT]);
@@ -190,8 +197,13 @@ class Game {
         bottomPipe.setPosition([this.canvas.width , topPipeHeight + this.PIPE_SEPARATION]);
         bottomPipe.setBoundingBox([this.PIPE_WIDTH , ASSET_HEIGHT]);
 
+        scoreBox.setVelocity([this.PIPE_SPEED , 0]);
+        scoreBox.setPosition([this.canvas.width + this.PIPE_WIDTH , topPipeHeight + this.PIPE_SEPARATION - this.PIPE_SEPARATION / 2]);
+        scoreBox.setBoundingBox([this.BIRD_WIDTH / 2 , this.BIRD_WIDTH / 2]);   // Just needs to be small
+
         this.pipes.push(topPipe);
         this.pipes.push(bottomPipe);
+        this.pipes.push(scoreBox);
     }
 
 
@@ -234,6 +246,19 @@ class Pipe extends PhysicalSprite {
 
     draw = () => {
         this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
+    }
+}
+
+
+// This is an invisible scorebox between the pipes that increases the score when hit
+class ScoreBox extends PhysicalSprite {
+    constructor(CONTEXT) {
+        super(CONTEXT);
+    }
+
+
+    draw = () => {
+        // Nothing, since it's invisible
     }
 }
 
