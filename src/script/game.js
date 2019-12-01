@@ -25,6 +25,7 @@ class Game {
         this.gameOver = this.gameOver.bind(this);
         this.generatePipeSet = this.generatePipeSet.bind(this);
         this.draw = this.draw.bind(this);
+        this.drawBorderedText = this.drawBorderedText.bind(this);
         this.drawScore = this.drawScore.bind(this);
         this.drawIntro = this.drawIntro.bind(this);
     }
@@ -262,15 +263,25 @@ class Game {
     }
 
 
+    drawBorderedText(text , xPos , yPos) {
+        this.context.fillStyle = 'white';
+        this.context.strokeStyle = 'black';
+
+        this.context.fillText(text , xPos , yPos);
+        this.context.strokeText(text , xPos , yPos);
+    }
+
+
     drawScore() {
         this.context.fillStyle = 'black';
 
         if(!this.isGameOver) {
-            this.context.fillText("Score: " + this.score , 10 , 50);
+            // this.context.strokeText("Score: " + this.score , 10 , 50);
+            this.drawBorderedText("Score: " + this.score , 10 , 50);
         }
         else {
-            this.context.fillText("Game over! Score: " + this.score , 10 , 50);
-            this.context.fillText("Press space to retry" , 10 , 100);
+            this.drawBorderedText("Game over! Score: " + this.score , 10 , 50);
+            this.drawBorderedText("Press space to retry" , 10 , 100);
         }
     }
 
@@ -280,7 +291,7 @@ class Game {
         this.bird.draw();
         this.ground.draw();
         this.context.fillStyle = 'black';
-        this.context.fillText("Press space to jump" , 10 , 50);
+        this.drawBorderedText("Press space to jump" , 10 , 50);
     }
 }
 
