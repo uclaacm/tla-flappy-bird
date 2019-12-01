@@ -7,6 +7,7 @@ class Game {
         this.setConstants();
 
         this.score = 0;
+        this.isGameOver = false;
 
         // This bindings, thanks to MS Edge
         this.setConstants = this.setConstants.bind(this);
@@ -17,6 +18,7 @@ class Game {
         this.pregame = this.pregame.bind(this);
         this.startOnKeydown = this.startOnKeydown.bind(this);
         this.jumpOnKeydown = this.jumpOnKeydown.bind(this);
+        this.restartOnKeydown = this.restartOnKeydown.bind(this);
         this.createSprites = this.createSprites.bind(this);
         this.start = this.start.bind(this);
         this.run = this.run.bind(this);
@@ -88,8 +90,7 @@ class Game {
 
     pregame() {
         this.drawIntro();
-
-        this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
+        window.addEventListener("keydown" , this.startOnKeydown);
     }
 
 
@@ -99,9 +100,20 @@ class Game {
         }
     }
 
+
     jumpOnKeydown(event) {
         if (event.key === " ") {
             this.bird.jump(this.BIRD_JUMP_VEL);
+        }
+    }
+
+
+    restartOnKeydown(event) {
+        if (event.key === " ") {
+            this.createSprites();
+            this.score = 0;
+            this.isGameOver = false;
+            this.start();
         }
     }
 
@@ -127,6 +139,9 @@ class Game {
     start() {
         // Remove start game event listener
         window.removeEventListener("keydown" , this.startOnKeydown);
+
+        // Remove restart game event listener
+        window.removeEventListener("keydown" , this.restartOnKeydown);
 
         // Make the bird jump on spacebar down
         window.addEventListener("keydown", this.jumpOnKeydown);
@@ -155,6 +170,7 @@ class Game {
 
         // Collision Detection
         if (this.ground.collidesWith(this.bird)) {
+            this.isGameOver = true;
             this.gameOver();
         }
 
@@ -166,6 +182,7 @@ class Game {
         this.pipes.forEach(i => {
             if (i.collidesWith(this.bird)) {
                 if(i instanceof Pipe) {
+                    this.isGameOver = true;
                     window.removeEventListener("keydown" , this.jumpOnKeydown);
 
                     this.pipes.forEach(i => {
@@ -194,6 +211,8 @@ class Game {
         window.clearInterval(this.loopRunner);
         window.clearInterval(this.pipeGenerator);
         this.bird.setPosition([this.BIRD_START_X , this.canvas.height - this.BIRD_HEIGHT - this.GROUND_HEIGHT]);
+
+        window.addEventListener("keydown" , this.restartOnKeydown);
     }
 
 
@@ -245,7 +264,14 @@ class Game {
 
     drawScore() {
         this.context.fillStyle = 'black';
-        this.context.fillText("Score: " + this.score , 10 , 50);
+
+        if(!this.isGameOver) {
+            this.context.fillText("Score: " + this.score , 10 , 50);
+        }
+        else {
+            this.context.fillText("Game over! Score: " + this.score , 10 , 50);
+            this.context.fillText("Press space to retry" , 10 , 100);
+        }
     }
 
 
