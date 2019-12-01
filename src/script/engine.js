@@ -32,7 +32,7 @@ class PhysicalSprite {
     /*
      * IS_COLLIDABLE- boolean that determines if the Sprite object can collide with anything
      */
-    setCollidable = (IS_COLLIDABLE) => {
+    setCollidable(IS_COLLIDABLE) {
         this.isCollidable = IS_COLLIDABLE;
     }
 
@@ -44,7 +44,7 @@ class PhysicalSprite {
      *      The position of the sprite is its upper left corner.
      *      (0 , 0) is the upper left corner of the Canvas.
      */
-    setPosition = (POS) => {
+    setPosition(POS) {
         this.pos = POS;
     }
 
@@ -52,7 +52,7 @@ class PhysicalSprite {
     /*
      * VEL- an array [xVelocity , yVelocity] that is the new velocity of the PhysicalSprite
      */
-    setVelocity = (VEL) => {
+    setVelocity(VEL) {
         this.vel = VEL;
     }
 
@@ -60,7 +60,7 @@ class PhysicalSprite {
     /*
      * ACCEL- an array [xAcceleration , yAcceleration] that is the new velocity of the PhysicalSprite
      */
-    setAcceleration = (ACCEL) => {
+    setAcceleration(ACCEL) {
         this.accel = ACCEL;
     }
 
@@ -68,7 +68,7 @@ class PhysicalSprite {
     /*
      * Updates velocity and acceleration in both axes using kinematics
      */
-    updateKinematics = (dt) => {
+    updateKinematics(dt) {
         this.pos[0] += (this.accel[0] / 2) * Math.pow(dt , 2) + this.vel[0] * dt;
         this.vel[0] += this.accel[0] * dt;
 
@@ -80,7 +80,7 @@ class PhysicalSprite {
     /*
      * BOUNDING_BOX- an integer array [width , height] that serves as the dimensions of the bounding box
      */
-    setBoundingBox = (BOUNDING_BOX) => {
+    setBoundingBox(BOUNDING_BOX) {
         this.boundingBox = BOUNDING_BOX;
     }
 
@@ -88,7 +88,7 @@ class PhysicalSprite {
     /*
      * Helper function for collision detection
      */
-    collisionCheck = (SPRITE) => {
+    collisionCheck(SPRITE) {
         // Check for collidability 
         if(!this.isCollidable || !SPRITE.isCollidable) {
             return false;
@@ -122,7 +122,7 @@ class PhysicalSprite {
      *
      * returns True if they collide, False otherwise
      */
-    collidesWith = (SPRITE) => {
+    collidesWith(SPRITE) {
         return this.collisionCheck(SPRITE) || SPRITE.collisionCheck(this);
     }
 }

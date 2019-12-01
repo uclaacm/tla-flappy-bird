@@ -7,10 +7,28 @@ class Game {
         this.setConstants();
 
         this.score = 0;
+
+        // This bindings, thanks to MS Edge
+        this.setConstants = this.setConstants.bind(this);
+        this.setBirdImg = this.setBirdImg.bind(this);
+        this.resize = this.resize.bind(this);
+        this.loadImg = this.loadImg.bind(this);
+        this.load = this.load.bind(this);
+        this.pregame = this.pregame.bind(this);
+        this.startOnKeydown = this.startOnKeydown.bind(this);
+        this.jumpOnKeydown = this.jumpOnKeydown.bind(this);
+        this.createSprites = this.createSprites.bind(this);
+        this.start = this.start.bind(this);
+        this.run = this.run.bind(this);
+        this.gameOver = this.gameOver.bind(this);
+        this.generatePipeSet = this.generatePipeSet.bind(this);
+        this.draw = this.draw.bind(this);
+        this.drawScore = this.drawScore.bind(this);
+        this.drawIntro = this.drawIntro.bind(this);
     }
 
 
-    setConstants = () => {
+    setConstants() {
         // Constants
         this.FPS                = 60;
         this.BIRD_START_X       = this.canvas.height / 5;
@@ -28,19 +46,19 @@ class Game {
     }
 
 
-    setBirdImg = (src) => {
+    setBirdImg(src) {
         this.birdImgSrc = src;
     }
 
 
-    resize = (width , height) => {
+    resize(width , height) {
         this.canvas.width = width;
         this.canvas.height = height;
         this.setConstants();
     }
 
 
-    loadImg = (src) => {
+    loadImg(src) {
         return new Promise( (resolve , reject) => {
             let img = new Image();
             img.src = src;
@@ -68,28 +86,27 @@ class Game {
     }
 
 
-    pregame = () => {
+    pregame() {
         this.drawIntro();
 
         this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
     }
 
 
-    startOnKeydown = (event) => {
+    startOnKeydown(event) {
         if (event.key === " ") {
             this.start();
         }
     }
 
-
-    jumpOnKeydown = (event) => {
+    jumpOnKeydown(event) {
         if (event.key === " ") {
             this.bird.jump(this.BIRD_JUMP_VEL);
         }
     }
 
     
-    createSprites = () => {
+    createSprites() {
         this.bird = new Bird(this.context , this.birdImg);
         this.bird.setPosition([this.BIRD_START_X, this.BIRD_START_Y]);
         this.bird.setAcceleration([0, this.BIRD_ACCEL]);
@@ -107,7 +124,7 @@ class Game {
     }
 
 
-    start = () => {
+    start() {
         // Remove start game event listener
         window.removeEventListener("keydown" , this.startOnKeydown);
 
@@ -125,7 +142,7 @@ class Game {
     }
 
 
-    run = () => {
+    run() {
         // 100.0 is not a typo! this is just a nice number after trial and error
         const DT = 100.0 / this.FPS;
 
@@ -173,14 +190,14 @@ class Game {
     }
 
 
-    gameOver = () => {
+    gameOver() {
         window.clearInterval(this.loopRunner);
         window.clearInterval(this.pipeGenerator);
         this.bird.setPosition([this.BIRD_START_X , this.canvas.height - this.BIRD_HEIGHT - this.GROUND_HEIGHT]);
     }
 
 
-    generatePipeSet = () => {
+    generatePipeSet() {
         const LEFTOVER_HEIGHT = this.canvas.height - this.GROUND_HEIGHT;
         const ASSET_HEIGHT = .65 * this.canvas.height;
         const PIPE_HEIGHTS = [
@@ -213,7 +230,7 @@ class Game {
     }
 
 
-    draw = () => {
+    draw() {
         this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
 
         this.pipes.forEach(i => {
@@ -226,13 +243,13 @@ class Game {
     }
 
 
-    drawScore = () => {
+    drawScore() {
         this.context.fillStyle = 'black';
         this.context.fillText("Score: " + this.score , 10 , 50);
     }
 
 
-    drawIntro = () => {
+    drawIntro() {
         this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
         this.bird.draw();
         this.ground.draw();
@@ -253,7 +270,7 @@ class Pipe extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 }
@@ -266,7 +283,7 @@ class ScoreBox extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         // Nothing, since it's invisible
     }
 }
@@ -279,12 +296,12 @@ class Bird extends PhysicalSprite {
         this.image = IMAGE;
     }
 
-    draw = () => {
+    draw() {
         this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 
 
-    jump = (accel) => {
+    jump(accel) {
         this.setVelocity([0, accel]);
     }
 }
@@ -296,7 +313,7 @@ class Ground extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         this.context.fillStyle = 'green';
         this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
     }
@@ -309,7 +326,7 @@ class Roof extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         // Don't really have to do anything since it's invisible
     }
 }
