@@ -7,10 +7,31 @@ class Game {
         this.setConstants();
 
         this.score = 0;
+        this.isGameOver = false;
+
+        // This bindings, thanks to MS Edge
+        this.setConstants = this.setConstants.bind(this);
+        this.setBirdImg = this.setBirdImg.bind(this);
+        this.resize = this.resize.bind(this);
+        this.loadImg = this.loadImg.bind(this);
+        this.load = this.load.bind(this);
+        this.pregame = this.pregame.bind(this);
+        this.startOnKeydown = this.startOnKeydown.bind(this);
+        this.jumpOnKeydown = this.jumpOnKeydown.bind(this);
+        this.restartOnKeydown = this.restartOnKeydown.bind(this);
+        this.createSprites = this.createSprites.bind(this);
+        this.start = this.start.bind(this);
+        this.run = this.run.bind(this);
+        this.gameOver = this.gameOver.bind(this);
+        this.generatePipeSet = this.generatePipeSet.bind(this);
+        this.draw = this.draw.bind(this);
+        this.drawBorderedText = this.drawBorderedText.bind(this);
+        this.drawScore = this.drawScore.bind(this);
+        this.drawIntro = this.drawIntro.bind(this);
     }
 
 
-    setConstants = () => {
+    setConstants() {
         // Constants
         this.FPS                = 60;
         this.BIRD_START_X       = this.canvas.height / 5;
@@ -28,54 +49,78 @@ class Game {
     }
 
 
-    resize = (width , height) => {
+    setBirdImg(src) {
+        this.birdImgSrc = src;
+    }
+
+
+    resize(width , height) {
         this.canvas.width = width;
         this.canvas.height = height;
         this.setConstants();
     }
 
 
-    load = () => {
+    loadImg(src) {
+        return new Promise( (resolve , reject) => {
+            let img = new Image();
+            img.src = src;
+            img.onload = () => {
+                resolve(img);
+            }
+            img.onerror = () => {
+                reject(new Error("Error loading image resource"));
+            }
+        } );
+    }
+
+
+    async load() {
+        this.context.font = "48px sans-serif";
+
+        this.topPipeImg = await this.loadImg("./assets/img/top-pipe.png");
+        this.bottomPipeImg = await this.loadImg("./assets/img/bottom-pipe.png");
+        this.backgroundImg = await this.loadImg("./assets/img/background.png");
+        this.birdImg = await this.loadImg((this.birdImgSrc) ? this.birdImgSrc : "./assets/img/bird.png");
+
         this.createSprites();
 
-        this.topPipeImg = new Image();
-        this.topPipeImg.src = "./assets/img/top-pipe.png";
-        this.topPipeImg.onload = () => {
-            this.bottomPipeImg = new Image();
-            this.bottomPipeImg.src = "./assets/img/bottom-pipe.png";
-            this.bottomPipeImg.onload = () => {
-                this.background = new Image();
-                this.background.src = "./assets/img/BG.png";
-                this.background.onload = this.pregame
-            }
-        }
+        this.pregame();
     }
 
 
-    pregame = () => {
-        this.draw();
+    pregame() {
         this.drawIntro();
-
-        this.gameStart = window.addEventListener("keydown" , this.startOnKeydown);
+        window.addEventListener("keydown" , this.startOnKeydown);
     }
 
 
-    startOnKeydown = (event) => {
+    startOnKeydown(event) {
         if (event.key === " ") {
             this.start();
         }
     }
 
 
-    jumpOnKeydown = (event) => {
+    jumpOnKeydown(event) {
         if (event.key === " ") {
             this.bird.jump(this.BIRD_JUMP_VEL);
         }
     }
 
+
+    restartOnKeydown(event) {
+        if (event.key === " ") {
+            this.createSprites();
+            this.score = 0;
+            this.isGameOver = false;
+            this.start();
+        }
+    }
+
     
-    createSprites = () => {
-        this.bird = new Bird(this.context);
+    createSprites() {
+        this.bird = new Bird(this.context , this.birdImg);
         this.bird.setPosition([this.BIRD_START_X, this.BIRD_START_Y]);
         this.bird.setAcceleration([0, this.BIRD_ACCEL]);
         this.bird.setBoundingBox([this.BIRD_WIDTH, this.BIRD_HEIGHT]);
@@ -92,9 +137,12 @@ class Game {
     }
 
 
-    start = () => {
+    start() {
         // Remove start game event listener
         window.removeEventListener("keydown" , this.startOnKeydown);
+
+        // Remove restart game event listener
+        window.removeEventListener("keydown" , this.restartOnKeydown);
 
         // Make the bird jump on spacebar down
         window.addEventListener("keydown", this.jumpOnKeydown);
@@ -110,7 +158,7 @@ class Game {
     }
 
 
-    run = () => {
+    run() {
         // 100.0 is not a typo! this is just a nice number after trial and error
         const DT = 100.0 / this.FPS;
 
@@ -123,6 +171,7 @@ class Game {
 
         // Collision Detection
         if (this.ground.collidesWith(this.bird)) {
+            this.isGameOver = true;
             this.gameOver();
         }
 
@@ -133,14 +182,21 @@ class Game {
 
         this.pipes.forEach(i => {
             if (i.collidesWith(this.bird)) {
-                window.removeEventListener("keydown" , this.jumpOnKeydown);
+                if(i instanceof Pipe) {
+                    this.isGameOver = true;
+                    window.removeEventListener("keydown" , this.jumpOnKeydown);
 
-                this.pipes.forEach(i => {
+                    this.pipes.forEach(i => {
+                        i.setCollidable(false);
+                        i.setVelocity([0 , 0]);
+                    });
+
+                    window.clearInterval(this.pipeGenerator);
+                }
+                else if(i instanceof ScoreBox) {
+                    this.score ++;
                     i.setCollidable(false);
-                    i.setVelocity([0 , 0]);
-                });
-
-                window.clearInterval(this.pipeGenerator);
+                }
             }
         });
 
@@ -152,18 +208,19 @@ class Game {
     }
 
 
-    gameOver = () => {
+    gameOver() {
         window.clearInterval(this.loopRunner);
         window.clearInterval(this.pipeGenerator);
         this.bird.setPosition([this.BIRD_START_X , this.canvas.height - this.BIRD_HEIGHT - this.GROUND_HEIGHT]);
+
+        window.addEventListener("keydown" , this.restartOnKeydown);
     }
 
 
-    generatePipeSet = () => {
+    generatePipeSet() {
         const LEFTOVER_HEIGHT = this.canvas.height - this.GROUND_HEIGHT;
-        const ASSET_HEIGHT = .6 * this.canvas.height;
+        const ASSET_HEIGHT = .65 * this.canvas.height;
         const PIPE_HEIGHTS = [
-            LEFTOVER_HEIGHT * .1 ,
             LEFTOVER_HEIGHT * .2 ,
             LEFTOVER_HEIGHT * .3 ,
             LEFTOVER_HEIGHT * .4 ,
@@ -173,6 +230,7 @@ class Game {
         let topPipeHeight = PIPE_HEIGHTS[Math.floor(Math.random() * PIPE_HEIGHTS.length)];
         let topPipe = new Pipe(this.context , this.topPipeImg);
         let bottomPipe = new Pipe(this.context , this.bottomPipeImg);
+        let scoreBox = new ScoreBox(this.context);
 
         topPipe.setVelocity([this.PIPE_SPEED , 0]);
         topPipe.setPosition([this.canvas.width , topPipeHeight - ASSET_HEIGHT]);
@@ -182,13 +240,18 @@ class Game {
         bottomPipe.setPosition([this.canvas.width , topPipeHeight + this.PIPE_SEPARATION]);
         bottomPipe.setBoundingBox([this.PIPE_WIDTH , ASSET_HEIGHT]);
 
+        scoreBox.setVelocity([this.PIPE_SPEED , 0]);
+        scoreBox.setPosition([this.canvas.width + this.PIPE_WIDTH , topPipeHeight + this.PIPE_SEPARATION - this.PIPE_SEPARATION / 2]);
+        scoreBox.setBoundingBox([this.BIRD_WIDTH / 2 , this.BIRD_WIDTH / 2]);   // Just needs to be small
+
         this.pipes.push(topPipe);
         this.pipes.push(bottomPipe);
+        this.pipes.push(scoreBox);
     }
 
 
-    draw = () => {
-        this.context.drawImage(this.background , 0 , 0 , this.canvas.width , this.canvas.height);
+    draw() {
+        this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
 
         this.pipes.forEach(i => {
             i.draw();
@@ -200,15 +263,35 @@ class Game {
     }
 
 
-    drawScore = () => {
-        this.context.fillStyle = 'black';
-        this.context.fillText("Score: " + this.score , 10 , 50);
+    drawBorderedText(text , xPos , yPos) {
+        this.context.fillStyle = 'white';
+        this.context.strokeStyle = 'black';
+
+        this.context.fillText(text , xPos , yPos);
+        this.context.strokeText(text , xPos , yPos);
     }
 
 
-    drawIntro = () => {
+    drawScore() {
         this.context.fillStyle = 'black';
-        this.context.fillText("Press space to jump" , 10 , 50);
+
+        if(!this.isGameOver) {
+            // this.context.strokeText("Score: " + this.score , 10 , 50);
+            this.drawBorderedText("Score: " + this.score , 10 , 50);
+        }
+        else {
+            this.drawBorderedText("Game over! Score: " + this.score , 10 , 50);
+            this.drawBorderedText("Press space to retry" , 10 , 100);
+        }
+    }
+
+
+    drawIntro() {
+        this.context.drawImage(this.backgroundImg , 0 , 0 , this.canvas.width , this.canvas.height);
+        this.bird.draw();
+        this.ground.draw();
+        this.context.fillStyle = 'black';
+        this.drawBorderedText("Press space to jump" , 10 , 50);
     }
 }
 
@@ -224,29 +307,38 @@ class Pipe extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 }
 
 
-class Bird extends PhysicalSprite {
+// This is an invisible scorebox between the pipes that increases the score when hit
+class ScoreBox extends PhysicalSprite {
     constructor(CONTEXT) {
         super(CONTEXT);
     }
 
-    setSprite = (imageLink) => {
-        this.image = new Image();
-        this.image.src = imageLink;
+
+    draw() {
+        // Nothing, since it's invisible
+    }
+}
+
+
+class Bird extends PhysicalSprite {
+    constructor(CONTEXT , IMAGE) {
+        super(CONTEXT);
+
+        this.image = IMAGE;
     }
 
-    draw = () => {
-        this.context.fillStyle = 'orange';
-        this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
+    draw() {
+        this.context.drawImage(this.image , this.pos[0] , this.pos[1] , this.boundingBox[0] , this.boundingBox[1]);
     }
 
 
-    jump = (accel) => {
+    jump(accel) {
         this.setVelocity([0, accel]);
     }
 }
@@ -258,7 +350,7 @@ class Ground extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         this.context.fillStyle = 'green';
         this.context.fillRect(this.pos[0], this.pos[1], this.boundingBox[0], this.boundingBox[1]);
     }
@@ -271,7 +363,7 @@ class Roof extends PhysicalSprite {
     }
 
 
-    draw = () => {
+    draw() {
         // Don't really have to do anything since it's invisible
     }
 }
